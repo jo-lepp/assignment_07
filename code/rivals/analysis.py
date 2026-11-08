@@ -19,12 +19,6 @@ is checked.
 import pandas as pd
 
 from .settings import (
-    ABOVE_ALL,
-    ABOVE_AVERAGE,
-    AT_AVERAGE,
-    BELOW_ALL,
-    BELOW_AVERAGE,
-    OUR_CAFE,
     SIZES,
 )
 

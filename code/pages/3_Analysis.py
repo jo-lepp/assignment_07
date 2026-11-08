@@ -11,25 +11,6 @@ Items the owner has not reviewed yet are left out, with a warning that says so.
 Test it: pytest tests/test_pipeline.py -k analysis_page
 """
 
-import os
-
-import pandas as pd
-import streamlit as st
-
-from rivals import (
-    ABOVE_ALL,
-    ABOVE_AVERAGE,
-    BELOW_ALL,
-    BELOW_AVERAGE,
-    DECISIONS_FILE,
-    MENUS_FILE,
-    add_canonical,
-    compare_prices,
-    gap_analysis,
-    match_items,
-    price_table,
-)
-from rivals.settings import DECISION_COLUMNS
 
 # --- The page: the algorithm, step by step ------------------------------------------
 #

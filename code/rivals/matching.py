@@ -20,20 +20,8 @@ same one. So the code proposes and the owner decides:
 The steps are described in words. You write the code.
 """
 
-import re
-import unicodedata
 
 import pandas as pd
-from rapidfuzz import fuzz, process
-
-from .settings import (
-    AUTO_MATCH,
-    DECISION_COLUMNS,
-    FILLER_WORDS,
-    NEW_ITEM,
-    OUR_CAFE,
-    REVIEW,
-)
 
 
 def normalize_name(name: str) -> str:
