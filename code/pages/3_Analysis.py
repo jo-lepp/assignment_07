@@ -28,9 +28,6 @@ Test it: pytest tests/test_pipeline.py -k analysis_page
 #    many, that they are left out, and to finish them on the Review Matches page.
 
 import os
-
-import pandas as pd
-import streamlit as st
 from rivals import (
     ABOVE_ALL,
     ABOVE_AVERAGE,
@@ -45,6 +42,8 @@ from rivals import (
     match_items,
     price_table,
 )
+import pandas as pd
+import streamlit as st
 
 st.set_page_config(layout="wide")
 st.title("Salt City: Prices and Gaps")

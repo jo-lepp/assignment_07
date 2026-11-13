@@ -159,7 +159,12 @@ def gap_analysis(menus: pd.DataFrame) -> pd.DataFrame:
 
     ours_unique = ours.drop_duplicates()
     theirs_unique = theirs[["canonical", "kind"]].drop_duplicates()
-    merged = ours_unique.merge(theirs_unique, on=["canonical", "kind"], how="outer", indicator=True)
+    merged = ours_unique.merge(
+        theirs_unique,
+        on=["canonical", "kind"],
+        how="outer",
+        indicator=True,
+    )
     merged["where"] = merged["_merge"].map(
         {"left_only": "only us", "right_only": "only them", "both": "both"}
     )

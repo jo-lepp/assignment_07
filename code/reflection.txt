@@ -1,5 +1,14 @@
 Write your reflection here.
 
+This assignment was helpful for me to understand importing self-made packages (in this case, rivals) 
+that contain several modules, because the regular python running would throw an error, but Streamlit
+had correct filepathing and knew where to find the package. It reminds me of work I'm doing with nextflow,
+and the structure of a pipeline I'm making with it. I did better this week with going slower and making sure 
+I understood everything, and can continue making sure I hit that benchmark. I can continue working to improve
+my understanding of streamlit, specifically the graphic design element of it, as columns, tabs/pages, and other 
+aspects of streamlit will be important to my final project. The actual scraping part of this assignment went well,
+I understand it and think that the pathing of selectors is clear.
+
 See reflection.md for what makes a good reflection — be specific, use the
 terminology from this assignment (HTML element, CSS selector, class and id
 selectors, sibling selector, inner_text, attribute, headless browser, waiting for
