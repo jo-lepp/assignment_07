@@ -111,6 +111,10 @@ def compare_prices(prices: pd.DataFrame) -> pd.DataFrame:
     rival_avg = rivals.mean(axis=1, skipna=True).round(2).rename("rival_avg")
 
     def row_position(row: pd.Series) -> str:
+        '''
+        Return our position for this row, using price_position.  The rivals' prices
+        are the non-missing values in the rival columns for this row.
+        '''
         rival_values = row[rival_columns].dropna()
         if rival_values.empty:
             return AT_AVERAGE
@@ -184,15 +188,17 @@ def gap_analysis(menus: pd.DataFrame) -> pd.DataFrame:
     out["sold_by"] = out["sold_by"].fillna("")
     out.loc[out["where"] == "only us", "sold_by"] = ""
     out.loc[out["where"] == "only us", "rivals"] = 0
+    out["where"] = pd.Categorical(
+        out["where"],
+        categories=["only them", "only us", "both"],
+        ordered=True,
+    )
 
-    ordered = []
-    for where in ["only them", "only us", "both"]:
-        subset = out[out["where"] == where].sort_values(
-            by=["rivals", "canonical"],
-            ascending=[False, True],
-            kind="mergesort",
-        )
-        ordered.append(subset)
-    return pd.concat(ordered, ignore_index=True)[
-        ["canonical", "kind", "where", "rivals", "sold_by"]
-    ]
+    ordered = out.sort_values(
+        by=["where", "rivals", "canonical"],
+        ascending=[True, False, True],
+        kind="mergesort",
+        ignore_index=True,
+    )
+    ordered["where"] = ordered["where"].astype(str)
+    return ordered[["canonical", "kind", "where", "rivals", "sold_by"]]
