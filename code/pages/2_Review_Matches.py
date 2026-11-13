@@ -18,8 +18,8 @@ import os
 
 import pandas as pd
 import streamlit as st
-
 from rivals import (
+    DECISION_COLUMNS,
     DECISIONS_FILE,
     MENUS_FILE,
     NEW_ITEM,
@@ -28,7 +28,6 @@ from rivals import (
     match_items,
     record_decision,
 )
-from rivals.settings import DECISION_COLUMNS
 
 st.title("Salt City: Review Matches")
 

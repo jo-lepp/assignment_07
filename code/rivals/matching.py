@@ -47,7 +47,9 @@ def normalize_name(name: str) -> str:
     - Split into words, drop the ones in settings.FILLER_WORDS, and join the rest
       with single spaces.
     """
-    name_stripped = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    name_stripped = (
+        unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    )
     name_lower = name_stripped.lower()
     name_cleaned = re.sub(r"[^a-z0-9 ]+", " ", name_lower)
     words = name_cleaned.split()
@@ -159,7 +161,10 @@ def match_items(menus: pd.DataFrame, decisions: pd.DataFrame) -> pd.DataFrame:
     pool = dict(zip(ours["item"], ours["kind"]))
 
     # The owner's answers
-    answers = {(row["cafe"], row["item"]): row["matched_to"] for row in decisions.to_dict("records")}
+    answers = {
+        (row["cafe"], row["item"]): row["matched_to"]
+        for row in decisions.to_dict("records")
+    }
 
     # The rival items, once each, in order
     theirs = menus[menus["cafe"] != OUR_CAFE]
@@ -196,7 +201,18 @@ def match_items(menus: pd.DataFrame, decisions: pd.DataFrame) -> pd.DataFrame:
             "suggestions": suggestions,
         })
 
-    return pd.DataFrame(rows, columns=["cafe", "item", "kind", "status", "matched_to", "score", "suggestions"])
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "cafe",
+            "item",
+            "kind",
+            "status",
+            "matched_to",
+            "score",
+            "suggestions",
+        ],
+    )
 
 
 def record_decision(decisions: pd.DataFrame, cafe: str, item: str,
@@ -213,6 +229,18 @@ def record_decision(decisions: pd.DataFrame, cafe: str, item: str,
     - `pd.concat` them with a one-row DataFrame of the new answer; reset the index.
       (When nothing is kept, the one-row DataFrame is the answer.)
     """
-    new_decision = pd.DataFrame([{"cafe": cafe, "item": item, "matched_to": matched_to}])
-    updated_decisions = pd.concat([decisions[~((decisions["cafe"] == cafe) & (decisions["item"] == item))], new_decision], ignore_index=True)
-    return updated_decisions[["cafe", "item", "matched_to"]].reset_index(drop=True)
+    new_decision = pd.DataFrame(
+        [{"cafe": cafe, "item": item, "matched_to": matched_to}]
+    )
+    updated_decisions = pd.concat(
+        [
+            decisions[
+                ~((decisions["cafe"] == cafe) & (decisions["item"] == item))
+            ],
+            new_decision,
+        ],
+        ignore_index=True,
+    )
+    return updated_decisions[["cafe", "item", "matched_to"]].reset_index(
+        drop=True
+    )

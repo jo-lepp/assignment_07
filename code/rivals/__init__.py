@@ -44,6 +44,7 @@ from .settings import (
     BELOW_AVERAGE,
     CACHE_DIR,
     CAFES,
+    DECISION_COLUMNS,
     DECISIONS_FILE,
     MENUS_FILE,
     NEW_ITEM,
@@ -58,7 +59,7 @@ __all__ = [
     "normalize_name", "top_candidates", "match_band", "match_items", "record_decision",
     "add_canonical", "price_table", "price_position", "compare_prices", "gap_analysis",
     "run_scraper",
-    "CACHE_DIR", "CAFES", "OUR_CAFE", "NEW_ITEM", "MENUS_FILE", "DECISIONS_FILE",
-    "cafe_url",
+    "CACHE_DIR", "CAFES", "OUR_CAFE", "NEW_ITEM", "MENUS_FILE", "DECISION_COLUMNS",
+    "DECISIONS_FILE", "cafe_url",
     "BELOW_ALL", "BELOW_AVERAGE", "AT_AVERAGE", "ABOVE_AVERAGE", "ABOVE_ALL",
 ]

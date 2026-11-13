@@ -26,15 +26,59 @@ Test it: pytest tests/test_pipeline.py -k analysis_page
 #    menus, decisions and matches exactly as on the Review Matches page.
 #    waiting <- how many matches are "unreviewed". If any: st.warning that says how
 #    many, that they are left out, and to finish them on the Review Matches page.
-#
+
+import os
+
+import pandas as pd
+import streamlit as st
+from rivals import (
+    ABOVE_ALL,
+    ABOVE_AVERAGE,
+    BELOW_ALL,
+    BELOW_AVERAGE,
+    DECISION_COLUMNS,
+    DECISIONS_FILE,
+    MENUS_FILE,
+    add_canonical,
+    compare_prices,
+    gap_analysis,
+    match_items,
+    price_table,
+)
+
+st.set_page_config(layout="wide")
+st.title("Salt City: Prices and Gaps")
+if not os.path.exists(MENUS_FILE):
+    st.info("The menus file does not exist yet. Run the pipeline first.")
+    st.stop()
+menus = pd.read_csv(MENUS_FILE)
+if os.path.exists(DECISIONS_FILE):
+    decisions = pd.read_csv(DECISIONS_FILE)
+else:
+    decisions = pd.DataFrame(columns=DECISION_COLUMNS)
+matches = match_items(menus, decisions)
+waiting = matches[matches["status"] == "unreviewed"]
+if not waiting.empty:
+    st.warning(
+        f"{len(waiting)} rival items are waiting for review. They are left out "
+        "of the analysis. Finish them on the Review Matches page first."
+    )
+
 # 2. THE ANALYSIS (all of it is in the package — the page only calls it)
 #    menus <- add_canonical(menus, matches)
 #    prices <- price_table(menus)
 #    comparison <- compare_prices(prices)
 #    gaps <- gap_analysis(menus)
-#
+
+menus = add_canonical(menus, matches)
+prices = price_table(menus)
+comparison = compare_prices(prices)
+gaps = gap_analysis(menus)
+
 # 3. TWO TABS: st.tabs(["Prices", "Gaps"])
-#
+
+prices_tab, gaps_tab = st.tabs(["Prices", "Gaps"])
+
 # 4. THE PRICES TAB (inside `with prices_tab:`)
 #    a. Two metrics side by side: "Priced below the market" (rows of comparison
 #       whose our_position is BELOW_ALL or BELOW_AVERAGE — .isin([...])) and "Priced
@@ -48,8 +92,50 @@ Test it: pytest tests/test_pipeline.py -k analysis_page
 #    d. st.caption that explains the our_position column, e.g. "👍👍 lower than all of
 #       them · 👍 lower than their average · 👉👈 average · 👎 higher than their
 #       average · 👎👎 higher than all of them".
-#
+
+with prices_tab:
+    m1, m2 = st.columns(2)
+    m1.metric(
+        "Priced below the market",
+        int(
+            comparison["our_position"]
+            .isin([BELOW_ALL, BELOW_AVERAGE])
+            .sum()
+        ),
+    )
+    m2.metric(
+        "Priced above the market",
+        int(
+            comparison["our_position"]
+            .isin([ABOVE_ALL, ABOVE_AVERAGE])
+            .sum()
+        ),
+    )
+    products = st.multiselect(
+        "Products",
+        sorted(comparison["canonical"].dropna().unique()),
+        key="products",
+        placeholder="All products",
+    )
+    shown = (
+        comparison[comparison["canonical"].isin(products)]
+        if products
+        else comparison
+    )
+    st.dataframe(shown, hide_index=True)
+    st.caption(
+        "👍👍 lower than all of them · 👍 lower than their average · "
+        "👉👈 average · 👎 higher than their average · 👎👎 higher than all "
+        "of them"
+    )
+
 # 5. THE GAPS TAB (inside `with gaps_tab:`)
 #    st.subheader "Only them — what we don't sell yet" and st.dataframe of the
 #    gaps rows where `where` is "only them"; then st.subheader "Only us — what sets
 #    us apart" and the "only us" rows.
+
+with gaps_tab:
+    st.subheader("Only them — what we don't sell yet")
+    st.dataframe(gaps[gaps["where"] == "only them"], hide_index=True)
+    st.subheader("Only us — what sets us apart")
+    st.dataframe(gaps[gaps["where"] == "only us"], hide_index=True)

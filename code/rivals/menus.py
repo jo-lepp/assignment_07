@@ -78,4 +78,7 @@ def build_dataset(rival_rows: list[dict]) -> pd.DataFrame:
     combined_menu = pd.concat([our_menu, rival_menu], ignore_index=True)
     categories = pd.read_csv(CATEGORIES_FILE)
     out = add_kinds(combined_menu, categories)
-    return out[["cafe", "category", "kind", "item", "size", "price"]].reset_index(drop=True)
+    return (
+        out[["cafe", "category", "kind", "item", "size", "price"]]
+        .reset_index(drop=True)
+    )
